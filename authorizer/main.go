@@ -31,7 +31,7 @@ func handleRequest(_ context.Context, event events.APIGatewayCustomAuthorizerReq
 	return res.APIGatewayCustomAuthorizerResponse, nil
 }
 
-func main()  {
+func main() {
 	lambda.Start(handleRequest)
 }
 
@@ -44,36 +44,38 @@ const (
 
 func (e Effect) String() string {
 	switch e {
-		case Allow: return "Allow"
-		case Deny: return "Deny"
+	case Allow:
+		return "Allow"
+	case Deny:
+		return "Deny"
 	}
 	return ""
 }
 
 type AuthorizeResponse struct {
 	events.APIGatewayCustomAuthorizerResponse
-	Region		string
-	AccountID 	string
-	APIID 		string
-	Stage 		string
+	Region    string
+	AccountID string
+	APIID     string
+	Stage     string
 }
 
 func NewAuthorizeResponse(principalID string, accountID string) *AuthorizeResponse {
 	return &AuthorizeResponse{
 		APIGatewayCustomAuthorizerResponse: events.APIGatewayCustomAuthorizerResponse{
-			PrincipalID:        principalID,
-			PolicyDocument:     events.APIGatewayCustomAuthorizerPolicy{
+			PrincipalID: principalID,
+			PolicyDocument: events.APIGatewayCustomAuthorizerPolicy{
 				Version: "2012-10-17",
 			},
 		},
-		Region: "*",
+		Region:    "*",
 		AccountID: accountID,
-		APIID: "*",
-		Stage: "*",
+		APIID:     "*",
+		Stage:     "*",
 	}
 }
 
-func (r *AuthorizeResponse)addMethod(effect Effect, verb string, resource string) {
+func (r *AuthorizeResponse) addMethod(effect Effect, verb string, resource string) {
 	resourceArn := "arn:aws:execute-api:" +
 		r.Region + ":" +
 		r.AccountID + ":" +
