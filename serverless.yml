@@ -57,6 +57,10 @@ package:
 functions:
   authorizer:
     handler: bin/authorizer
+    environment:
+      URL: ${ssm:/go-authorizer/stg/url}
+      USERNAME: ${ssm:/go-authorizer/stg/username}
+      PASSWORD: ${ssm:/go-authorizer/stg/password~true}
 #    role: AuthorizerLambdaRole
 #    events:
 #      - http:
