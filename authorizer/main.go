@@ -4,13 +4,13 @@ import (
 	"context"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/zephiransas/go-authorizer/authorizer/token"
 	"log"
 	"strings"
 )
 
 func handleRequest(_ context.Context, event events.APIGatewayCustomAuthorizerRequest) (events.APIGatewayCustomAuthorizerResponse, error) {
 	log.Println("Method ARN: " + event.MethodArn)
-	log.Println("token:" + event.AuthorizationToken)
 
 	tmp := strings.Split(event.MethodArn, ":")
 	region := tmp[3]
@@ -23,7 +23,13 @@ func handleRequest(_ context.Context, event events.APIGatewayCustomAuthorizerReq
 	res.APIID = apiGatewayArnTmp[0]
 	res.Stage = apiGatewayArnTmp[1]
 
-	if event.AuthorizationToken == "allow" {
+	r, err := token.Introspection(event.AuthorizationToken)
+	if err != nil {
+		log.Fatalln(err)
+		return events.APIGatewayCustomAuthorizerResponse{}, err
+	}
+
+	if r {
 		res.addMethod(Allow, apiGatewayArnTmp[2], "*")
 	} else {
 		res.addMethod(Deny, apiGatewayArnTmp[2], "*")
