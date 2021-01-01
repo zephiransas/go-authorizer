@@ -25,7 +25,7 @@ func handleRequest(_ context.Context, event events.APIGatewayCustomAuthorizerReq
 
 	r, err := token.Introspection(event.AuthorizationToken)
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 		return events.APIGatewayCustomAuthorizerResponse{}, err
 	}
 
